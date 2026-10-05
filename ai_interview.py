@@ -43,8 +43,9 @@ Agar mezonlarga to'g'ri kelmasa (yoshi, tajribasi yo'qligi, odobsizlik), [VERDIC
 }
 
 def generate_ai_response(history: list, lang: str) -> str:
-    if not os.getenv("OPENAI_API_KEY"):
-        return "Ошибка: не задан ключ OpenAI API в переменных окружения."
+    # Проверяем, что клиент вообще инициализирован
+    if not client:
+        return "Ошибка: не задан ключ OpenAI API."
         
     system_prompt = PROMPTS.get(lang, PROMPTS["ru"])
     messages = [{"role": "system", "content": system_prompt}] + history
