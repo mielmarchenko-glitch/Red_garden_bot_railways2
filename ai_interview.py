@@ -1,9 +1,10 @@
-# ai_interview.py
+import os
 from openai import OpenAI
 from config import OPENAI_API_KEY
 
-# Передаем ключ в инициализатор клиента OpenAI
-client = OpenAI(api_key=OPENAI_API_KEY)
+# Безопасная инициализация клиента OpenAI
+api_key = os.getenv("OPENAI_API_KEY") or OPENAI_API_KEY
+client = OpenAI(api_key=api_key) if api_key else None
 
 PROMPTS = {
     "ru": """
@@ -41,6 +42,9 @@ Agar mezonlarga to'g'ri kelmasa (yoshi, tajribasi yo'qligi, odobsizlik), [VERDIC
 }
 
 def generate_ai_response(history: list, lang: str) -> str:
+    if not client:
+        return "Ошибка: не задан ключ OpenAI API."
+        
     system_prompt = PROMPTS.get(lang, PROMPTS["ru"])
     messages = [{"role": "system", "content": system_prompt}] + history
     
@@ -48,7 +52,7 @@ def generate_ai_response(history: list, lang: str) -> str:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=messages,
-        temperature=0.7,
+            temperature=0.7,
             max_tokens=300
         )
         return response.choices[0].message.content.strip()
