@@ -1,8 +1,5 @@
 import os
-from openai import OpenAI
-
-# Инициализируем клиент OpenAI строго по официальной спецификации свежих версий
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+import requests
 
 PROMPTS = {
     "ru": """
@@ -40,19 +37,37 @@ Agar mezonlarga to'g'ri kelmasa (yoshi, tajribasi yo'qligi, odobsizlik), [VERDIC
 }
 
 def generate_ai_response(history: list, lang: str) -> str:
-    if not os.getenv("OPENAI_API_KEY"):
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
         return "Ошибка: не задан ключ OpenAI API."
         
     system_prompt = PROMPTS.get(lang, PROMPTS["ru"])
     messages = [{"role": "system", "content": system_prompt}] + history
     
+    headers = {
+        "Authorization": f"Bearer {api_key.strip()}",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "model": "gpt-4o-mini",
+        "messages": messages,
+        "temperature": 0.7,
+        "max_tokens": 300
+    }
+    
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=messages,
-            temperature=0.7,
-            max_tokens=300
+        response = requests.post(
+            "https://api.openai.com/v1/chat/completions",
+            json=payload,
+            headers=headers,
+            timeout=30
         )
-        return response.choices[0].message.content.strip()
+        data = response.json()
+        
+        if response.status_code != 200:
+            return f"Ошибка API OpenAI: {data.get('error', {}).get('message', 'Неизвестная ошибка')}"
+            
+        return data["choices"][0]["message"]["content"].strip()
     except Exception as e:
         return f"Ошибка связи с ИИ: {e}"
