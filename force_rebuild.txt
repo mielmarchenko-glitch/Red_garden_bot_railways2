@@ -1,0 +1,12 @@
+=== RED GARDEN RETAIL CHAIN: HR BOT CONFIGURATION ===
+Target Position: Retail Store Sellers (Day Shift & Night Shift)
+Location: Uchtepa District, Tashkent
+Requirements:
+1. Age strict check: 21 to 45 years old.
+2. Location: Uchtepa district residency/convenience.
+3. Experience: Mandatory grocery store / retail experience & basic PC/cash register skills.
+4. Working format: Day shift or Night shift (permanent/temporary).
+5. Salary & Conditions transparency:
+   - Night shift conditions: 150,000 UZS during probation, then 200,000 UZS per shift + bonuses.
+Languages: Russian (RU) & Uzbek (UZ) bilingual automated screening.
+Deployment: Railway clean build without legacy openai package dependencies.
