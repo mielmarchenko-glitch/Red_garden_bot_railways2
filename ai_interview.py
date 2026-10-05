@@ -1,10 +1,14 @@
 import os
 from openai import OpenAI
-from config import OPENAI_API_KEY
 
-# Безопасная инициализация клиента OpenAI
-api_key = os.getenv("OPENAI_API_KEY") or OPENAI_API_KEY
-client = OpenAI(api_key=api_key) if api_key else None
+# Принудительно ищем ключ в окружении Railway или подтягиваем напрямую
+api_key = os.getenv("OPENAI_API_KEY")
+
+if not api_key:
+    # Запасной вариант на случай, если переменная не подхватилась автоматически
+    api_key = "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"
+
+client = OpenAI(api_key=api_key)
 
 PROMPTS = {
     "ru": """
