@@ -1,16 +1,13 @@
 import os
 from openai import OpenAI
 
-# Получаем ключ из окружения Railway и очищаем от возможных пробелов или переносов строк
-raw_api_key = os.getenv("OPENAI_API_KEY")
-api_key = raw_api_key.strip() if raw_api_key else None
-
-client = OpenAI(api_key=api_key)
+# Инициализируем клиент OpenAI строго по официальной спецификации свежих версий
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 PROMPTS = {
     "ru": """
 Ты — профессиональный HR-менеджер сети розничных магазинов «Красный сад» в Ташкенте. 
-В настоящее время актуален подбор продавцов: на дневную и ночную смены.
+В настоящее время актуален подбор продавцов: на дневную и ночную смены в Учтепинском районе.
 
 Проводи текстовое собеседование строго по очереди, задавая по одному вопросу за раз:
 1. Контроль возраста: кандидат должен быть строго от 21 до 45 лет. (Если младше 21 или старше 45 — [VERDICT: FAIL]).
@@ -26,7 +23,7 @@ PROMPTS = {
 """,
     "uz": """
 Toshkentdagi «Krasniy sad» oziq-ovqat do‘konlar tarmog‘ining professional HR menejerisiz.
-Hozirgi vaqtda kunduzgi va tungi smenalar uchun sotuvchilar tanlovi ochiq.
+Hozirgi vaqtda Uchtepa tumanida kunduzgi va tungi smenalar uchun sotuvchilar tanlovi ochiq.
 
 Suhbatni ketma-ket, bir vaqtning o'zida bittadan savol berib olib boring:
 1. Yoshni nazorat qilish: nomzod qat'iy 21 yoshdan 45 yoshgacha bo'lishi kerak. (21 dan kichik yoki 45 dan katta bo'lsa — [VERDICT: FAIL]).
@@ -43,8 +40,7 @@ Agar mezonlarga to'g'ri kelmasa (yoshi, tajribasi yo'qligi, odobsizlik), [VERDIC
 }
 
 def generate_ai_response(history: list, lang: str) -> str:
-    # Проверяем, что клиент вообще инициализирован
-    if not client:
+    if not os.getenv("OPENAI_API_KEY"):
         return "Ошибка: не задан ключ OpenAI API."
         
     system_prompt = PROMPTS.get(lang, PROMPTS["ru"])
