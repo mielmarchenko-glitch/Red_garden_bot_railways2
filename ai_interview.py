@@ -1,8 +1,11 @@
 import os
 from openai import OpenAI
 
-# Безопасная инициализация клиента OpenAI исключительно через переменные окружения (Railway)
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Получаем ключ из окружения Railway и очищаем от возможных пробелов или переносов строк
+raw_api_key = os.getenv("OPENAI_API_KEY")
+api_key = raw_api_key.strip() if raw_api_key else None
+
+client = OpenAI(api_key=api_key)
 
 PROMPTS = {
     "ru": """
